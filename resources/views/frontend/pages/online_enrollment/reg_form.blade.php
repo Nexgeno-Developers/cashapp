@@ -1668,6 +1668,15 @@
 
         @endphp
 
+        @php
+            session()->forget('step');
+            session()->forget('otp_timestamp');
+            session()->forget('phone');
+            session()->forget('temp_user_id');
+            session()->forget('otp');
+            Session()->put('step', 1);
+        @endphp
+
 {{--
         <!-- <div class="p-3 mb-2 text-white" style="background-color:#e1aa7a;">
             <h5> Preview Info </h5>
