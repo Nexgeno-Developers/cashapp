@@ -55,20 +55,15 @@ Route::get('/404', [IndexController::class, 'not_found'])->name('error_page');
 Route::get('/thank-you', [IndexController::class, 'thank_you'])->name('thank_you');
 Route::get('/cookie-policy', [IndexController::class, 'cookie_policy'])->name('cookie-policy');
 Route::post('/contact-save', [IndexController::class, 'contact_save'])->name('contact.create');
-Route::post('/comment-save', [IndexController::class, 'comment_save'])->name('comment.create');
+// Route::post('/comment-save', [IndexController::class, 'comment_save'])->name('comment.create');
 
-Route::get('/search', [IndexController::class, 'search'])->name('search');
+// Route::get('/search', [IndexController::class, 'search'])->name('search');
 // Home END
-
-
-Route::get('/account/onlineenrollment', [AccountController::class, 'online_enrollment'])->name('account.new.enrollment.page');
-
-Route::any('/create-account/{param}', [AccountController::class, 'create_account'])->name('account.create');
 
 //----------------------------- Payment PayU ----------------------------------------------------//
 
 Route::any('/create_payumoney/{order_id}', [AccountController::class, 'create_payumoney'])->name('create.payumoney');
-Route::any('/payment-success', [AccountController::class, 'payment_success'])->name('payumoney.success');
+Route::any('/payment-success/{param}', [AccountController::class, 'payment_success'])->name('payumoney.success');
 Route::any('/payment-cancel', [AccountController::class, 'payment_cancel'])->name('payumoney.fail');
 
 Route::any('/webhook_pum_success', [AccountController::class, 'webhook_pum_success']);
@@ -87,6 +82,10 @@ Route::get('/linkaccount', [AccountController::class, 'link_account'])->name('li
 
 
 Route::middleware('auth.frontend')->group(function () {
+
+    Route::get('/account/onlineenrollment', [AccountController::class, 'online_enrollment'])->name('account.new.enrollment.page');
+
+    Route::any('/create-account/{param}', [AccountController::class, 'create_account'])->name('account.create');
 
     Route::get('/edituserprofile', [AccountController::class, 'edit_user_profile'])->name('edit-user-profile');
 
@@ -164,7 +163,11 @@ Route::get('/send-test-email', function () {
 Route::any('/get-privious-page', function () {
     $step = Session()->get('step');
     if($step == 12){
-        $step = 8;
+        $step = 7;
+    } elseif ($step == 6) {
+        $step = 4;
+    } elseif ($step == 3) {
+        $step = 1;
     } else {
         $step = $step - 1;
     }

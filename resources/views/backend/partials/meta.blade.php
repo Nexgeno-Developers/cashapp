@@ -1,5 +1,9 @@
 <base id="baseUrl" href="{{url('')}}">
 <meta charset="utf-8">
+
+<meta name="robots" content="noindex">
+<meta name="googlebot" content="noindex">
+
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="robots" content="noindex">
 <title>Motiwala Jewels Gold and Diamonds Pvt Ltd</title>

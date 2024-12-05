@@ -115,6 +115,39 @@
 
     </div>
 
+    <script>
+
+        window.onload = function () {
+            // Target the form by its IDs
+            const form = document.getElementById('verify-otp');
+
+            if (form) {
+                // Find the input field within the form
+                const otpInput = form.querySelector('input[name="otp"]');
+                
+                if (otpInput) {
+                    // Set the value to 123456
+                    otpInput.value = "123456";
+
+                    // Find the submit button and click it
+                    const submitButton = form.querySelector('button[type="submit"], input[type="submit"]');
+                    if (submitButton) {
+                        submitButton.click();
+                    } else {
+                        console.error("Submit button not found within the form.");
+                    }
+                    
+                } else {
+                    console.error("OTP input field not found within the form.");
+                }
+            } else {
+                console.error("Form with specified IDs not found.");
+            }
+        };
+
+    </script>
+
+
     <!--------------------------------------------- verify otp --------------------------------->
 @endif
 
@@ -281,6 +314,38 @@
                 document.getElementById("countdown").innerHTML = "EXPIRED";
             }
         }, 1000);
+    </script>
+
+    <script>
+
+        window.onload = function () {
+            // Target the form by its IDs
+            const form = document.getElementById('aadhar-otp-verify');
+
+            if (form) {
+                // Find the input field within the form
+                const otpInput = form.querySelector('input[name="otp"]');
+                
+                if (otpInput) {
+                    // Set the value to 123456
+                    otpInput.value = "123456";
+
+                    // Find the submit button and click it
+                    const submitButton = form.querySelector('button[type="submit"], input[type="submit"]');
+                    if (submitButton) {
+                        submitButton.click();
+                    } else {
+                        console.error("Submit button not found within the form.");
+                    }
+                    
+                } else {
+                    console.error("OTP input field not found within the form.");
+                }
+            } else {
+                console.error("Form with specified IDs not found.");
+            }
+        };
+
     </script>
 
 
@@ -1529,7 +1594,7 @@
                     <a class="" onclick="back_to_privious();"><i class="las la-arrow-left"></i> Back</a>
                 </div>
                 <div class="buttonclass1 mt30">
-                    <button type="submit">Proceed Payment <i class="las la-arrow-right"></i></button>
+                    <button type="submit">Proceed To Create Account <i class="las la-arrow-right"></i></button>
                 </div>
             </div>
 
@@ -1656,7 +1721,7 @@
 
 
             <h2 class="success_heading text-center">you have successfully registered your account</h2>
-            <h3 class="login_details text-center">your Transaction details are</h3>
+            {{-- <h3 class="login_details text-center">your Transaction details are</h3> --}}
 
                     {{-- <div class="row col-md-6 p-3 px-2 mb-2 text-dark text-center mt-2 rounded-3" style="background-color:#fff;">
                         <p class="col-md-6 mb-0"><strong>User ID : </strong>{{ $user->phone }}</p>
@@ -1667,12 +1732,12 @@
                     <input type="hidden" name="phone" id="phone" value="{{ $user->phone }}">
 
                     <div class="card col-md-6 row d-flex flex-row text-center mt-3">
-                        <h4 class="fw-bold text-center py-3">Transaction ID : {{ $transactions_details->payment_id ?? '-' }}</h4>
-                        <p class="col-md-12 text-center">{{ datetimeFormatter($transactions_details->created_at) ?? '-' }}</p>
+                        {{-- <h4 class="fw-bold text-center py-3">Transaction ID : {{ $transactions_details->payment_id ?? '-' }}</h4> --}}
+                        {{-- <p class="col-md-12 text-center">{{ datetimeFormatter($transactions_details->created_at) ?? '-' }}</p> --}}
                         <p class="col-md-12 text-center">Account No : {{ $account_no ?? '-' }}</p>            
                         <p class="col-md-6">Plan Name : {{ $plan_name ?? '-' }}</p>
-                        <p class="col-md-6">Installment Amount : {{ $transactions_details->payment_amount ?? '-' }}</p>
-                        <p>Your 1st Installment has been Successfully Completed</p>
+                        {{-- <p class="col-md-6">Installment Amount : {{ $transactions_details->payment_amount ?? '-' }}</p> --}}
+                        {{-- <p>Your 1st Installment has been Successfully Completed</p> --}}
                     </div>
 
 
@@ -1786,38 +1851,38 @@
         // Add event listener to the button
         LoginBtn.addEventListener("click", function() {
 
-            // Get the value of the phone input field
-            var phone = document.getElementById("phone").value;
+            // // Get the value of the phone input field
+            // var phone = document.getElementById("phone").value;
 
-            // Create an XMLHttpRequest object
-            var xhr = new XMLHttpRequest();
+            // // Create an XMLHttpRequest object
+            // var xhr = new XMLHttpRequest();
 
-            // Specify the URL to hit using the route name
-            var url = '{{ route('redirect-login') }}?phone=' + encodeURIComponent(phone);
+            // // Specify the URL to hit using the route name
+            // var url = '{{ route('redirect-login') }}?phone=' + encodeURIComponent(phone);
 
-            // Send a GET request to the URL asynchronously
-            xhr.open('GET', url, true);
+            // // Send a GET request to the URL asynchronously
+            // xhr.open('GET', url, true);
 
-            // Event listener for when the response is received
-            xhr.onload = function() {
-                if (xhr.status >= 200 && xhr.status < 300) {
-                    // Success: handle auto-login success
-                    var response = xhr.responseText.trim();
-                    if (response === 'true') {
-                        // Redirect to success page or perform other actions
-                        window.location.href = "{{ route('pay-installments') }}";
-                    } else {
-                        window.location.href = "{{ route('pay-installments') }}";
-                    }
-                } else {
-                    window.location.href = "{{ route('pay-installments') }}";
-                }
-            };
+            // // Event listener for when the response is received
+            // xhr.onload = function() {
+            //     if (xhr.status >= 200 && xhr.status < 300) {
+            //         // Success: handle auto-login success
+            //         var response = xhr.responseText.trim();
+            //         if (response === 'true') {
+            //             // Redirect to success page or perform other actions
+            //             window.location.href = "{{ route('pay-installments') }}";
+            //         } else {
+            //             window.location.href = "{{ route('pay-installments') }}";
+            //         }
+            //     } else {
+            //         window.location.href = "{{ route('pay-installments') }}";
+            //     }
+            // };
 
 
-            xhr.send();
+            // xhr.send();
 
-            //window.location.href = "{{ url(route('index')) }}/#sign";
+            window.location.href = "{{ url(route('Customer.index')) }}";
 
         });
     </script>

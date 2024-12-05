@@ -61,7 +61,10 @@
                                         @endif
                                     @endif
                                     <p class="card-text">Last Payment Due :
-                                        {{ date('d-m-Y', strtotime($last_payment_date->due_date_start)) }}</p>
+                                        {{ isset($last_payment_date) && isset($last_payment_date->due_date_start) 
+                                            ? date('d-m-Y', strtotime($last_payment_date->due_date_start)) 
+                                            : '-' }}
+                                    </p>
                                     <p class="card-text">No of Installments Paid : {{ count($Installments_paid) }}</p>
                                 </div>
                             </div>

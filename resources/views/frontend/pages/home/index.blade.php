@@ -1,4 +1,4 @@
-@extends(Session::has('user_id') ? 'frontend.layouts.app2' : 'frontend.layouts.app')
+@extends(Session::has('user_id') ? 'frontend.layouts.app' : 'frontend.layouts.app')
 
 @section('page.title', 'Motiwala Jewels | Shop luxury jewellery | Get Pure Gold at Best Price')
 

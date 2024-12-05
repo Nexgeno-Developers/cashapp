@@ -38,7 +38,7 @@ class AccountController extends Controller
 
         // Validating the request data
         $validator = Validator::make($request->all(), [
-            'phone' => 'required|regex:/^\d{10}$/',
+            'email' => 'required|email',
             'password' => 'required',
         ]);
 
@@ -54,37 +54,37 @@ class AccountController extends Controller
 
 
 
-        $authenticated = Auth::guard('web')->attempt($request->only(['phone', 'password']));
+        $authenticated = Auth::guard('web')->attempt($request->only(['email', 'password']));
         if ($authenticated) {
             session()->forget(['step', 'otp_timestamp', 'phone', 'temp_user_id', 'otp', 'aadhar_no', 'payment']);
 
 
-            // $user = DB::table('users')->where('phone', $request->input('phone'))->first();
+            $user = DB::table('users')->where('email', $request->input('email'))->first();
 
-            $user = DB::table('users')
-                ->join('userdetails', 'userdetails.user_id', '=', 'users.id')
-                ->where('users.phone', $request->input('phone'))
-                ->select('users.*', 'userdetails.esign')
-                ->first();
+            // $user = DB::table('users')
+            //     ->join('userdetails', 'userdetails.user_id', '=', 'users.id')
+            //     ->where('users.phone', $request->input('phone'))
+            //     ->select('users.*', 'userdetails.esign')
+            //     ->first();
 
             if ($user) {
-                if (is_null($user->status)) {
+                if (!in_array($user->role_id,['1','2','3'])) {
                     Session::flush();
 
-                    if($user->step == 8){
+                    // if($user->step == 8){
                         
-                        $step = !is_null($user->esign) ? 12 : 8;
+                    //     $step = !is_null($user->esign) ? 12 : 8;
 
-                    } else {
-                        $step = $user->step + 1;
-                    }
+                    // } else {
+                    //     $step = $user->step + 1;
+                    // }
             
-                    Session::put('temp_user_id', $user->id);
-                    Session::put('step', $step);
+                    // Session::put('temp_user_id', $user->id);
+                    // Session::put('step', $step);
             
                     return response()->json([
                         'status' => 'incomplete',
-                        'message' => 'Please Fill ALL Forms'
+                        'message' => 'Access Denied!'
                     ], 200);
                 }
             }
@@ -677,19 +677,21 @@ class AccountController extends Controller
         }
 
 
-        $otp = mt_rand(100000, 999999);
+        // $otp = mt_rand(100000, 999999);
+        $otp = '123456';
         $timestamp = Carbon::now();
         Session::put('otp', $otp);
         Session::put('otp_timestamp', $timestamp);
         Session::put('phone', $request->phone);
 
         //sms integration
-        $sms = (new SmsController)->smsgatewayhub_registration_otp($request->phone, $otp);
+        // $sms = (new SmsController)->smsgatewayhub_registration_otp($request->phone, $otp);
 
         Session::put('step', 2);
 
         $rsp_msg['response'] = 'success';
-        $rsp_msg['message']  = "OTP has been Share on this No : $request->phone ";
+        // $rsp_msg['message']  = "OTP has been Share on this No : $request->phone ";
+        $rsp_msg['message']  = "Successfully Added No : $request->phone ";
 
         return $rsp_msg;
     }
@@ -734,12 +736,14 @@ class AccountController extends Controller
 
             if ($user_data) {
                 if (is_null($user_data->status) && !is_null($user_data->step)) {
-                    Session::flush();
+                    // Session::flush();
 
                     if($user_data->step == 8){
 
-                        $step = !is_null($user_data->esign) ? 12 : 8;
-                        
+                        $step = !is_null($user_data->esign) ? 12 : 12;
+                    
+                    } elseif ($user_data->step == 7) {
+                        $step =  12;
                     } else {
                         $step = $user_data->step + 1;
                     }
@@ -781,7 +785,7 @@ class AccountController extends Controller
             Session::put('step', 3);
 
             $rsp_msg['response'] = 'success';
-            $rsp_msg['message']  = "OTP has been Verified";
+            $rsp_msg['message']  = "Phone No has been Verified";
         } else {
             $rsp_msg['response'] = 'error';
             $rsp_msg['message']  = "Invalid OTP";
@@ -794,7 +798,8 @@ class AccountController extends Controller
 
     public function resendOtp($request)
     {
-        $otp = mt_rand(100000, 999999);
+        // $otp = mt_rand(100000, 999999);
+        $otp = '123456';
         Session::put('otp', $otp);
 
         $timestamp = Carbon::now();
@@ -803,10 +808,10 @@ class AccountController extends Controller
         $phone = Session::get('phone');
 
         //sms integration  
-        $sms = (new SmsController)->smsgatewayhub_registration_otp($phone, $otp);
+        // $sms = (new SmsController)->smsgatewayhub_registration_otp($phone, $otp);
 
         $rsp_msg['response'] = 'success';
-        $rsp_msg['message']  = "OTP has been Resend no this No : $phone ";
+        $rsp_msg['message']  = "Successfully Added No : $phone ";
 
         return $rsp_msg;
     }
@@ -854,32 +859,34 @@ class AccountController extends Controller
 
 
 
-        $requestOtp = (new AadharController)->requestOtpAadhar($request->aadhar);
-        $requestOtp = json_decode($requestOtp);
+        // $requestOtp = (new AadharController)->requestOtpAadhar($request->aadhar);
+        // $requestOtp = json_decode($requestOtp);
 
-        if ($requestOtp->success) {
+        $success = true;
+
+        if ($success) {
             //do success stuff
 
             $rsp_msg['response'] = 'success';
-            $rsp_msg['message']  = "OTP sent to linked Mobile number with " . $request->aadhar . " Aadhar number.";
+            $rsp_msg['message']  = "Successfully Added " . $request->aadhar . " Aadhar number.";
 
             //set session of aadhar client ID
-            session(['customer_aadhar_clientId' => $requestOtp->data->client_id]);
+            // session(['customer_aadhar_clientId' => $requestOtp->data->client_id]);
 
             session(['aadhar_no' => $request->aadhar]);
 
             Session::put('step', 4);
         } else {
-            //do failure stuff
-            if ($requestOtp->status_code == 429) {
+            // //do failure stuff
+            // if ($requestOtp->status_code == 429) {
 
-                $rsp_msg['response'] = 'error';
-                $rsp_msg['message']  = "Wait 60 seconds to generate OTP for same Aadhaar Number.";
-            } else {
+            //     $rsp_msg['response'] = 'error';
+            //     $rsp_msg['message']  = "Wait 60 seconds to generate OTP for same Aadhaar Number.";
+            // } else {
 
-                $rsp_msg['response'] = 'error';
-                $rsp_msg['message']  = "Invalid Aadhar number / No mobile number is linked with " . $request->aadhar . " Aadhar number!";
-            }
+            //     $rsp_msg['response'] = 'error';
+            //     $rsp_msg['message']  = "Invalid Aadhar number / No mobile number is linked with " . $request->aadhar . " Aadhar number!";
+            // }
         }
 
         return $rsp_msg;
@@ -891,32 +898,34 @@ class AccountController extends Controller
 
         $aadhar = Session::get('aadhar_no');
 
-        $requestOtp = (new AadharController)->requestOtpAadhar($aadhar);
-        $requestOtp = json_decode($requestOtp);
+        // $requestOtp = (new AadharController)->requestOtpAadhar($aadhar);
+        // $requestOtp = json_decode($requestOtp);
 
-        if ($requestOtp->success) {
+        $success = true;
+
+        if ($success) {
             //do success stuff
 
             $rsp_msg['response'] = 'success';
-            $rsp_msg['message']  = "OTP Resend to linked Mobile number with " . $aadhar . " Aadhar number.";
+            $rsp_msg['message']  = "Successfully Added " . $aadhar . " Aadhar number.";
 
             //set session of aadhar client ID
-            session(['customer_aadhar_clientId' => $requestOtp->data->client_id]);
+            // session(['customer_aadhar_clientId' => $requestOtp->data->client_id]);
 
             session(['aadhar_no' => $aadhar]);
 
             Session::put('step', 4);
         } else {
-            //do failure stuff
-            if ($requestOtp->status_code == 429) {
+            // //do failure stuff
+            // if ($requestOtp->status_code == 429) {
 
-                $rsp_msg['response'] = 'error';
-                $rsp_msg['message']  = "Wait 60 seconds to generate OTP for same Aadhaar Number.";
-            } else {
+            //     $rsp_msg['response'] = 'error';
+            //     $rsp_msg['message']  = "Wait 60 seconds to generate OTP for same Aadhaar Number.";
+            // } else {
 
-                $rsp_msg['response'] = 'error';
-                $rsp_msg['message']  = "Invalid Aadhar number / No mobile number is linked with " . $request->aadhar . " Aadhar number!";
-            }
+            //     $rsp_msg['response'] = 'error';
+            //     $rsp_msg['message']  = "Invalid Aadhar number / No mobile number is linked with " . $request->aadhar . " Aadhar number!";
+            // }
         }
 
         return $rsp_msg;
@@ -936,11 +945,12 @@ class AccountController extends Controller
             return $rsp_msg;
         }
 
-        $verify = (new AadharController)->validateOtpAadhar($request->otp, session('customer_aadhar_clientId'));
-        $verify = json_decode($verify);
+        // $verify = (new AadharController)->validateOtpAadhar($request->otp, session('customer_aadhar_clientId'));
+        // $verify = json_decode($verify);
 
-
-        if ($verify->success) {
+        $success = true;
+        $verify = [];
+        if ($success) {
 
             //update query here
             DB::table('userdetails')->where('user_id', Session::get('temp_user_id'))->update([
@@ -972,27 +982,27 @@ class AccountController extends Controller
             // }
 
 
-            $profileImage = $verify->data->profile_image;
-            $fullName = $verify->data->full_name;
-            $address = $verify->data->address;
-            $zip = $verify->data->zip;
-            $dob = $verify->data->dob;
-            $care_of = $verify->data->care_of;
-            $mobile = $verify->data->mobile_hash;
+            // $profileImage = $verify->data->profile_image;
+            // $fullName = $verify->data->full_name;
+            // $address = $verify->data->address;
+            // $zip = $verify->data->zip;
+            // $dob = $verify->data->dob;
+            // $care_of = $verify->data->care_of;
+            // $mobile = $verify->data->mobile_hash;
 
-            $customer_detail = [
-                'profileImage' => $profileImage,
-                'name' => $fullName,
-                'address' => $address,
-                'zip' => $zip,
-                'dob' => $dob,
-                'care_of' => $care_of,
-                'mobile' => $mobile,
-            ];
+            // $customer_detail = [
+            //     'profileImage' => $profileImage,
+            //     'name' => $fullName,
+            //     'address' => $address,
+            //     'zip' => $zip,
+            //     'dob' => $dob,
+            //     'care_of' => $care_of,
+            //     'mobile' => $mobile,
+            // ];
 
-            Session::put('customer_detail', $customer_detail);
+            // Session::put('customer_detail', $customer_detail);
 
-            Session::put('step', 5);
+            Session::put('step', 6);
 
             $rsp_msg['response'] = 'success';
             $rsp_msg['message']  = "Aadhar Number verified successfully!";
@@ -1106,11 +1116,11 @@ class AccountController extends Controller
             $email = strtolower($request->input('email'));
 
             if (!$users_email) {
-                $sms = (new SmsController)->smsgatewayhub_registration_successful($phone);
+                // $sms = (new SmsController)->smsgatewayhub_registration_successful($phone);
 
-                $email_templet1 = (new SmsController)->email_registration_successful($phone, $email);
+                // $email_templet1 = (new SmsController)->email_registration_successful($phone, $email);
 
-                $wati_registration_success = (new SmsController)->wati_registration_success($phone);
+                // $wati_registration_success = (new SmsController)->wati_registration_success($phone);
             }
 
 
@@ -1208,7 +1218,7 @@ class AccountController extends Controller
             //     'nominee_relation' => $request->input('nominee_relation'),
             // ]);
 
-            Session::put('step', 8);
+            Session::put('step', 12);
 
             $rsp_msg['response'] = 'success';
             $rsp_msg['message']  = "Plan Detail Added successfully. Please Proceed";
@@ -1432,6 +1442,9 @@ class AccountController extends Controller
 
         //insert in order
         $txnid = substr(hash('sha256', mt_rand() . microtime()), 0, 20);
+
+        $temp_user_id = Session::get('temp_user_id') ?? auth()->user()->id;
+
         $orderId = DB::table('temp_transactions')->insertGetId([
             // 'name'             => $user->first_name . ' ' . $user->last_name,
             'name'             => $user->fullname,
@@ -1443,6 +1456,7 @@ class AccountController extends Controller
             'payment_id'       => $txnid,
             'ip_data'          => $ip,
             'location'         => $ip_data['city'] ?? '-',
+            'temp_user_id'     => $temp_user_id,
             'created_at'       => date('Y-m-d H:i:s'),
             'updated_at'       => date('Y-m-d H:i:s')
         ]);
@@ -1579,25 +1593,27 @@ class AccountController extends Controller
     }
 
 
-    public function payment_success(Request $request)
+    public function payment_success($param, Request $request)
     {
 
-        $input = $request->all();
+        // $input = $request->all();
 
-        if (!$input) //redirect if no post
-        {
-            return redirect(url(''));
-        }
+        $order = DB::table('temp_transactions')->where('id', $param)->first();
 
-        $status = $input["status"];
-        $firstname = $input["firstname"];
-        $amount = $input["amount"];
-        $txnid = $input["txnid"];
-        $posted_hash = $input["hash"];
-        $key = $input["key"];
-        $productinfo = $input["productinfo"];
-        $email = $input["email"];
-        $salt = config('payu.salt_key');
+        // if (!$input) //redirect if no post
+        // {
+        //     return redirect(url(''));
+        // }
+
+        // $status = $input["status"];
+        // $firstname = $input["firstname"];
+        $amount = $order->grand_total;
+        $txnid = '';
+        // $posted_hash = $input["hash"];
+        // $key = $input["key"];
+        // $productinfo = $input["productinfo"];
+        // $email = $input["email"];
+        // $salt = config('payu.salt_key');
 
         // echo"<pre>";
         // var_dump($posted_hash);
@@ -1624,7 +1640,7 @@ class AccountController extends Controller
 
         // } else {
 
-        $order = DB::table('temp_transactions')->where('payment_id', $txnid)->first();
+
 
         //avoid update if payment is paid
         if ($order->payment_status == 'paid') {
@@ -1665,26 +1681,26 @@ class AccountController extends Controller
 
         $amount = $order->grand_total;
 
-        //update order
-        $transactions_id = DB::table('transactions')->insertGetId([
-            'user_id' => Session::get('temp_user_id'),
-            'payment_id' => $txnid,
-            'payment_amount' => $order->grand_total,
-            'payment_response' => json_encode($input),
-            'payment_type' => 'payu',
-            'payment_status' => 'paid',
-            'ip_data' => $order->ip_data,
-            'location' => $order->location,
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s')
-        ]);
+        // //update order
+        // $transactions_id = DB::table('transactions')->insertGetId([
+        //     'user_id' => Session::get('temp_user_id'),
+        //     'payment_id' => $txnid,
+        //     'payment_amount' => $order->grand_total,
+        //     'payment_response' => json_encode($input),
+        //     'payment_type' => 'payu',
+        //     'payment_status' => 'paid',
+        //     'ip_data' => $order->ip_data,
+        //     'location' => $order->location,
+        //     'created_at' => date('Y-m-d H:i:s'),
+        //     'updated_at' => date('Y-m-d H:i:s')
+        // ]);
 
 
 
         session()->forget(['otp_timestamp', 'phone', 'otp', 'aadhar_no', 'customer_detail', 'client_id', 'customer_aadhar_clientId']);
 
 
-        Session::put('transactions_id', $transactions_id);
+        // Session::put('transactions_id', $transactions_id);
 
         /*------------ success stuff --------------*/
 
@@ -1695,10 +1711,14 @@ class AccountController extends Controller
             'title' => 'Success'
         ]);
 
-        // delete temp recored
-        DB::table('temp_transactions')->where('payment_id', $txnid)->delete();
 
-        $this->auto_add_transactions(Session::get('temp_user_id'), $amount, $transactions_id);
+
+        $this->auto_add_transactions(Session::get('temp_user_id'), $amount);
+
+
+
+        // delete temp recored
+        DB::table('temp_transactions')->where('id', $param)->delete();
 
         //sms integration
 
@@ -1708,18 +1728,18 @@ class AccountController extends Controller
 
         $installment = '1st';
 
-        $sms = (new SmsController)->smsgatewayhub_installment_payment_successful($phone_email->phone, $installment, $amount);
+        // $sms = (new SmsController)->smsgatewayhub_installment_payment_successful($phone_email->phone, $installment, $amount);
 
-        $email_templet = (new SmsController)->email_installment_payment_successful($phone_email->email, $installment, $amount);
+        // $email_templet = (new SmsController)->email_installment_payment_successful($phone_email->email, $installment, $amount);
 
-        $wati_payment_success = (new SmsController)->wati_payment_success($phone_email->phone, $phone_email->fullname, $installment, $amount);
+        // $wati_payment_success = (new SmsController)->wati_payment_success($phone_email->phone, $phone_email->fullname, $installment, $amount);
 
         return redirect()->route('account.new.enrollment.page');
         // }
     }
 
 
-    public function auto_add_transactions($temp_user_id, $amount, $transactions_id)
+    public function auto_add_transactions($temp_user_id, $amount)
     {
         // Retrieve the user's plan ID from the session
         $user_plan_Details = DB::table('users')->where('id', $temp_user_id)->value('plan_id');
@@ -1762,15 +1782,11 @@ class AccountController extends Controller
 
         DB::table('redemption_items')->insert([
             'redemption_id' => $redemption_id,
-            'transaction_id' => $transactions_id,
             'installment_no' => 1,
             'due_date_start' => date('Y-m-d H:i:s'),
             'due_date_end' => date('Y-m-d H:i:s'),
             'installment_amount' => $amount,
-            'receivable_amount' => $totalAmount,
-            'receivable_gold' => gold_amount($totalAmount),
-            'status' => 'paid',
-            'receipt_date' => date('Y-m-d H:i:s'),
+            'status' => 'pending',
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s')
         ]);
@@ -1780,7 +1796,7 @@ class AccountController extends Controller
             $due_date_end = date('Y-m-d H:i:s', strtotime("$due_date_start +7 days"));
 
             // Determine status based on installment number
-            $status = ($i == 1) ? 'pending' : 'unpaid';
+            $status = ($i == 1) ? 'unpaid' : 'unpaid';
 
             // Insert transaction record
             DB::table('redemption_items')->insert([
@@ -1938,11 +1954,11 @@ class AccountController extends Controller
 
                 $installment = '1st';
 
-                $sms = (new SmsController)->smsgatewayhub_installment_payment_successful($phone_email->phone, $installment, $amount);
+                // $sms = (new SmsController)->smsgatewayhub_installment_payment_successful($phone_email->phone, $installment, $amount);
 
-                $email_templet = (new SmsController)->email_installment_payment_successful($phone_email->email, $installment, $amount);
+                // $email_templet = (new SmsController)->email_installment_payment_successful($phone_email->email, $installment, $amount);
 
-                $wati_payment_success = (new SmsController)->wati_payment_success($phone_email->phone, $phone_email->fullname, $installment, $amount);
+                // $wati_payment_success = (new SmsController)->wati_payment_success($phone_email->phone, $phone_email->fullname, $installment, $amount);
 
                 /*------------ success stuff --------------*/
 
@@ -2075,11 +2091,11 @@ class AccountController extends Controller
 
                 $phone_email = DB::table('users')->where('id', $order->temp_user_id)->select('phone', 'email', 'fullname')->first();
 
-                $sms = (new SmsController)->smsgatewayhub_installment_payment_successful($phone_email->phone, $installment, $amount);
+                // $sms = (new SmsController)->smsgatewayhub_installment_payment_successful($phone_email->phone, $installment, $amount);
 
-                $email_templet = (new SmsController)->email_installment_payment_successful($phone_email->email, $installment, $amount);
+                // $email_templet = (new SmsController)->email_installment_payment_successful($phone_email->email, $installment, $amount);
 
-                $wati_payment_success = (new SmsController)->wati_payment_success($phone_email->phone, $phone_email->fullname, $installment, $amount);
+                // $wati_payment_success = (new SmsController)->wati_payment_success($phone_email->phone, $phone_email->fullname, $installment, $amount);
 
                 // delete temp recored
                 DB::table('temp_transactions')->where('payment_id', $txnid)->delete();

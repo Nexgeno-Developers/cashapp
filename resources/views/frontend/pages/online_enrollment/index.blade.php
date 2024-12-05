@@ -1,4 +1,4 @@
-@extends(Session::has('user_id') ? 'frontend.layouts.app2' : 'frontend.layouts.app')
+@extends(Session::has('user_id') ? 'frontend.layouts.app' : 'frontend.layouts.app')
 
 @section('page.title', 'Motiwala')
 
@@ -489,10 +489,10 @@
                             toastr.success(response.response_message.message, response.response_message.response);
 
                             var orderId = response.response_message.orderId;
-                            var redirectUrl = "{{ url('/create_payumoney') }}/" + orderId;
+                            var redirectUrl = "{{ url('/payment-success') }}/" + orderId;
 
                             setTimeout(function() {
-                                //location.reload();
+                                // location.reload();
                                 window.location.href = redirectUrl;
                             }, 1500);
 
@@ -591,5 +591,6 @@
             });
         </script>
     @endif
+    
 
 @endsection

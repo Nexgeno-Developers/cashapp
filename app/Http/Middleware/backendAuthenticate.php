@@ -16,7 +16,11 @@ class backendAuthenticate
     public function handle(Request $request, Closure $next)
     {
         if (isset(auth()->user()->id) && in_array(auth()->user()->role_id, [1, 2, 3])):
-                return $next($request);               
+            if($request->route()->getName() == 'backend.login'):
+                return  redirect(route('backend.dashboard'));
+            else:
+                return $next($request); 
+            endif;              
         else:
             if($request->route()->getName() == 'backend.login'):
                 return $next($request);
