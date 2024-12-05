@@ -1,0 +1,70 @@
+.red {
+    color: #f00;
+}
+
+.font-size11    
+{
+	font-size: 10px;	
+}
+
+.select2-container--default .select2-selection--single {
+    border: 1px solid #dee2e6 !important;
+}
+.select2-container .select2-selection--single {
+    height: 38px !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 38px !important;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+   color: #fff;
+}
+
+
+.auth-fluid .auth-fluid-form-box {
+    max-width: 350px !important;
+}
+
+.auth-brand .logo-dark img {
+    width: 70% !important;
+}
+
+.auth-brand .logo-dark {
+    display: block;
+    text-align: center;
+}
+
+.navbar-custom, .nav-user {
+    background-color: #fff;
+    border-color: #fff;
+}
+
+#search-form .col-md-3 {
+    width: 22%;
+}
+
+#search-form .col-md-2 {
+    width: 11.666667%;
+}
+
+#largeModal .modal-body {
+    background-image: url('/assets/frontend/images/body_bg.png');
+    background-position: right;
+    background-size: cover;
+    background-repeat: repeat;
+    padding: 24px;
+}
+
+#largeModal .card-header {
+    padding: 16px 24px 0px;
+}
+
+#largeModal .card.col-md-12 {
+    height: 11em;
+    margin-bottom: 0px;
+}
+
+.customer_installment_modal .card {
+    height: 17em;
+}
