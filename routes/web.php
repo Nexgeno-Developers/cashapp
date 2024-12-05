@@ -175,12 +175,12 @@ Route::any('/get-privious-page', function () {
     Session()->put('step', $step);
 })->name('get-privious-page');
 
-Route::get('/test-otp', function () {
-    $sessionData = Session()->all();
+// Route::get('/test-otp', function () {
+//     $sessionData = Session()->all();
 
-    // Print session data
-    dd($sessionData);
-});
+//     // Print session data
+//     dd($sessionData);
+// });
 
 Route::get('/clear-session', function () {
     Session()->flush();
@@ -252,4 +252,4 @@ Route::get('/redirect-login', function () {
 
 // Route::get('/testing-codeing', [AccountController::class, 'testing'])->name('testing');
 
-Route::get('/custom-ksf-p', [IndexController::class, 'ip_get_per']);
+// Route::get('/custom-ksf-p', [IndexController::class, 'ip_get_per']);
