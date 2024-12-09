@@ -1668,14 +1668,15 @@
 
         @endphp
 
-        {{-- @php
+        @php
             session()->forget('step');
             session()->forget('otp_timestamp');
             session()->forget('phone');
             session()->forget('temp_user_id');
             session()->forget('otp');
+            session()->forget('payment');
             Session()->put('step', 1);
-        @endphp --}}
+        @endphp
 
 {{--
         <!-- <div class="p-3 mb-2 text-white" style="background-color:#e1aa7a;">
