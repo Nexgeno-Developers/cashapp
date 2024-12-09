@@ -165,7 +165,7 @@ Route::any('/get-privious-page', function () {
     if($step == 12){
         $step = 7;
     } elseif ($step == 6) {
-        $step = 4;
+        $step = 3;
     } elseif ($step == 3) {
         $step = 1;
     } else {
