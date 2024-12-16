@@ -54,6 +54,13 @@
                             </a>
                         </li> 
 
+                        <li class="side-nav-item">
+                            <a href="{{ route('account.new.enrollment.page') }}" aria-expanded="false" aria-controls="sidebarDashboards" class="side-nav-link">
+                                <i class="ri-user-add-line"></i>
+                                <span> New Account </span>
+                            </a>
+                        </li>
+
                         
                         <li class="side-nav-item">
                             <a href="{{ route('Customer.index') }}" aria-expanded="false" aria-controls="sidebarDashboards" class="side-nav-link">

@@ -13,7 +13,7 @@
                         {{-- <a class="nav-link" data-bs-toggle="modal" href="#loginmodal"><i class="las la-user"></i> Sign
                         </a> --}}
                         <a class="nav-link" href="{{ url(route('backend.dashboard')) }}"><i
-                          class="las la-user-plus"></i> Admin Panel</a>
+                          class="las la-user"></i> Admin Panel</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url(route('account.new.enrollment.page')) }}"><i
