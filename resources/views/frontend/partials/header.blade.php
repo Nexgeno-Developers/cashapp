@@ -10,8 +10,10 @@
             <div class="d-flex align-items-center" id="navbarScroll">
                 <ul class="d-flex navbar-nav ms-md-auto my-md-2 my-lg-0 my-0 mx-0 nav_right_menu ">
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="modal" href="#loginmodal"><i class="las la-user"></i> Sign
-                        </a>
+                        {{-- <a class="nav-link" data-bs-toggle="modal" href="#loginmodal"><i class="las la-user"></i> Sign
+                        </a> --}}
+                        <a class="nav-link" href="{{ url(route('backend.dashboard')) }}"><i
+                          class="las la-user-plus"></i> Admin Panel</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url(route('account.new.enrollment.page')) }}"><i

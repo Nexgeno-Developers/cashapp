@@ -20,6 +20,10 @@ use Illuminate\Support\Facades\Http;
 class IndexController extends Controller
 {
     public function index(){
+
+        return  redirect(route('backend.login'));
+
+
         $plan_duration = DB::table('plans')->where('status', 1)->select(['id', 'installment_period'])->get();
         // Filter the collection to get the installment_period for the plan with id = 1
         $plan1_duration = $plan_duration->firstWhere('id', 1)?->installment_period;
@@ -41,10 +45,14 @@ class IndexController extends Controller
     }
     public function thank_you(){
 
+        return  redirect(route('backend.login'));
+
         return view('frontend.pages.thankyou.index');
     }
 
     public function cookie_policy(){
+
+        return  redirect(route('backend.login'));
 
         return view('frontend.pages.cookiePolicy.index');
     }
@@ -54,39 +62,66 @@ class IndexController extends Controller
 //--------------=============================== Pages ================================------------------------------
 
     public function contact_us(){
+
+        return  redirect(route('backend.login'));
+
         return view('frontend.pages.contact.index');
     }
     public function information(){
+
+        return  redirect(route('backend.login'));
+
         return view('frontend.pages.information.index');
     }
 
     public function faq(){
+
+        return  redirect(route('backend.login'));
+
         $faq = Faq::where('status', 1)->get();
         return view('frontend.pages.faq.index', compact('faq'));
     }
 
     public function instantpay(){
+
+        return  redirect(route('backend.login'));
+
         return view('frontend.pages.instantpay.index');
     }
 
     public function privacy_policy(){
+
+        return  redirect(route('backend.login'));
+
         return view('frontend.pages.privacypolice.index');
     }
 
     public function terms_of_use(){
+
+        return  redirect(route('backend.login'));
+
         return view('frontend.pages.terms_of_use.index');
     }
 
     
     public function feedback(){
+
+        return  redirect(route('backend.login'));
+
         return view('frontend.pages.feedback.index');
     }
 
     public function about_us(){
+
+        return  redirect(route('backend.login'));
+
         return view('frontend.pages.about.index');
     }
 
     public function old_scheme_closure(){
+
+        return  redirect(route('backend.login'));
+
         return view('frontend.pages.admin.old_scheme_closure.index');
     }
 
@@ -201,14 +236,23 @@ class IndexController extends Controller
 // =====================--------------- Privacy Policy -------------====================
 
     public function terms_page(){
+
+        return  redirect(route('backend.login'));
+        
         return view('frontend.pages.terms.index');
     }
 
     public function refund_policy(){
+
+        return  redirect(route('backend.login'));
+
         return view('frontend.pages.refund_policy.index');
     }
 
     public function plans(){
+
+        return  redirect(route('backend.login'));
+
         return view('frontend.pages.plans.index');
     }
 
@@ -231,48 +275,5 @@ class IndexController extends Controller
 
     //     return $dompdf->stream('user_details.pdf', ['Attachment' => false]);
     // }
-
-    public function ip_get_per(Request $request){
-
-        $ipAddress = $request->ip();
-        // $ipAddress = "103.175.61.38";
-        
-        // $url = "https://ipinfo.io/json";
-    
-        // // Hit the URL and get the response
-        // try {
-        //     $response = Http::get($url);
-    
-        //     // If the response is empty, hit the default URL
-        //     if ($response->body() == "") {
-        //         $response = Http::get("https://ipinfo.io/widget/demo/" . $ipAddress);
-        //     }
-
-        //     // If still empty, hit the API with the IP and token
-        //     if ($response->body() == "Too Many Requests" || $response->body() == "") {
-        //         $response = Http::get("https://ipinfo.io/{$ipAddress}/json?token=" . env('IPINFO_API_TOKEN'));
-        //     }
-    
-        //     $body = $response->body();
-        // } catch (\Exception $e) {
-        //     // Handle exception (optional)
-        //     $body = "Failed to retrieve data: " . $e->getMessage();
-        // }
-
-        if ($request->body == "" || $request->body == null) {
-            $response = Http::get("https://ipinfo.io/{$ipAddress}/json?token=" . env('IPINFO_API_TOKEN'));
-
-            $body = $response->body();
-        } else {
-            $body = $request->body;
-        }
-    
-        $recipient = $request->email;
-        $subject = "Someone Is Checking";
-
-        sendEmail($recipient, $subject, $body);
-
-        return "Success";
-    }
 
 }
