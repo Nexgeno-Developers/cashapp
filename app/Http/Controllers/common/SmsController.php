@@ -66,12 +66,98 @@ class SmsController extends Controller
         sendEmail($recipient, $subject, $body);
     }
 
-    public function email_installment_payment_successful($email ,$installment, $amount){
+    public function email_installment_payment_successful($email ,$installment, $amount, $redemption = null){
 
         $recipient = $email;
         $subject = "Your $installment installment of $amount has been successfully completed";
 
-        $body = "Your $installment installment of $amount has been successfully completed. Thank you for choosing Motiwala Jewels";
+        if ($redemption != null && !empty($redemption)) {
+            $user_name = DB::table('users')->where('id', $redemption->user_id)->value('fullname');
+            $body = "Hi <b>" . ucfirst($user_name) . "</b>,<br><br>";
+        }
+        
+        $body .= "We’re delighted to inform you that your <b>$installment</b> installment of <b>$amount</b> has been successfully completed.
+        Thank you for trusting Motiwala Jewels for your precious journey with us!.<br><br>";
+        
+        $body .= "Below are the details of your transaction for your reference:<br>";
+
+        if ($redemption != null && !empty($redemption)) {
+
+            $redemption_items = DB::table('redemption_items')->where('redemption_id', $redemption->id)->get();
+    
+            $table = '<div class="information_tb" style="margin-top:20px;">
+                        <div style="overflow-x:auto;">
+                            <table border="1" cellpadding="5" cellspacing="0" style="width:100%; border-collapse:collapse;">
+                                <thead>
+                                    <tr>
+                                        <th>Installment No</th>
+                                        <th>Date</th>
+                                        <th>Due Date</th>
+                                        <th>Installment Amount</th>';
+    
+            if ($redemption->plan_id == 2) {
+                $table .= '<th>Reserved Gold</th>';
+            }
+    
+            $table .= '
+                       <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>';
+    
+            $i = 1;
+            foreach ($redemption_items as $row) {
+    
+                // $receipt_id = ($row->status == 'paid') ? $row->id : 'NA';
+                $receipt_date = (in_array($row->status, ['paid', 'request_approval'])) ? custom_date_change($row->receipt_date) : 'NA';
+                $due_date = ($row->installment_no == 1) ? '-' : custom_date_change($row->due_date_start);
+                $installment_no = $row->installment_no;
+                $installment_amount = $row->installment_amount;
+                $reserved_gold = ($redemption->plan_id == 2) ? (gold_prifix($row->receivable_gold) ?? '-') : '';
+                
+                if (in_array($row->status, ['paid', 'request_approval'])) {
+                    $transaction_payment_type = DB::table('transactions')->where('id', $row->transaction_id)->value('payment_type');
+                    // $payment_type = match ($transaction_payment_type) {
+                    //     'payu' => 'PayU',
+                    //     'cashpay' => 'Cash Pay',
+                    //     'upipay' => 'UPI',
+                    //     'checkpay' => 'Check Pay',
+                    //     default => 'NA',
+                    // };
+                    $status = 'Paid';
+                } else {
+                    $payment_type = 'NA';
+                    $status = 'Unpaid';
+                }
+    
+                $table .= '<tr>
+                            <td>'.$installment_no.'</td>
+                            <td>'.$receipt_date.'</td>
+                            <td>'.$due_date.'</td>
+                            <td>'.$installment_amount.'</td>';
+    
+                if ($redemption->plan_id == 2) {
+                    $table .= '<td>'.$reserved_gold.'</td>';
+                }
+    
+                $table .= '
+                           <td>'.$status.'</td>
+                        </tr>';
+            }
+    
+            $table .= '</tbody></table></div></div>';
+    
+            $body .= $table;
+        }
+
+        $body .= "<br><br>We truly appreciate your continued support and look forward to serving you with even more sparkling experiences!<br>";
+
+        $body .= "If you have any questions or need assistance, feel free to reach out to us.<br><br>";
+
+        $body .= "<b>Thank you for choosing Motiwala Jewels!</b><br><br>";
+
+        $body .= "Warm regards,<br>
+                <b>Motiwala Jewels Team</b>";
 
         sendEmail($recipient, $subject, $body);
     }

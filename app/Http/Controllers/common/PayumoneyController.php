@@ -149,7 +149,7 @@ class PayumoneyController extends Controller
         $redemption = DB::table('redemptions')
             ->where('user_id', $order->temp_user_id)
             ->where('status', 1)
-            ->first(['id','plan_id']);
+            ->first(['id','plan_id','user_id']);
     
         if ($redemption) {
             // Fetch the redemption item
@@ -284,7 +284,7 @@ class PayumoneyController extends Controller
     
         $sms = (new SmsController)->smsgatewayhub_installment_payment_successful($phone, $installment, $amount);
 
-        $email_templet = (new SmsController)->email_installment_payment_successful($email, $installment, $amount);
+        $email_templet = (new SmsController)->email_installment_payment_successful($email, $installment, $amount, $redemption);
 
         // delete temp recored
         DB::table('temp_transactions')->where('payment_id', $txnid)->delete();
