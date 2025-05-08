@@ -614,7 +614,7 @@
                 <div class="col-md-4">
                     <div class="form-group mt-md-5 mt-3 adhar_field">
                         <label class="pb-3">DOB * ( As per Aadhar )</label>
-                        <input type="date" class="form-control" name="dob" value="{{ $user_detail->dob }}" max="{{ date('Y-m-d', strtotime('-18 years')) }}" required />
+                        <input type="date" class="form-control" name="dob" value="{{ $user_detail->dob ?? '' }}" max="{{ date('Y-m-d', strtotime('-18 years')) }}" required />
                     </div>
                 </div>
 
@@ -630,7 +630,7 @@
                     <label class="pb-2">Name </label>
                     <input type="text" class="form-control  uppercase" name="nominee_name" pattern="[A-Za-z]+"
                         minlength="3" placeholder="Please Enter Your Nominee Name"
-                        value="{{ $user_detail->nominee_name }}" />
+                        value="{{ $user_detail->nominee_name ?? '' }}" />
                 </div>
             </div>
 
@@ -639,7 +639,7 @@
                     <label class="pb-2">Contact Number </label>
                     <input type="text" class="form-control" name="nominee_phone" pattern="[0-9]+"
                         minlength="10" maxlength="10" placeholder="Please Enter Your Nominee Contact Number"
-                        value="{{ $user_detail->nominee_phone }}" />
+                        value="{{ $user_detail->nominee_phone ?? '' }}" />
                 </div>
             </div>
 
@@ -647,14 +647,14 @@
                 <div class="form-group mt-md-5 mt-3 adhar_field">
                     <label class="pb-2">Date Of Birth</label>
                     <input type="date" class="form-control" name="nominee_dob"
-                        value="{{ $user_detail->nominee_dob }}" max="{{ date('Y-m-d') }}" />
+                        value="{{ $user_detail->nominee_dob ?? '' }}" max="{{ date('Y-m-d') }}" />
                 </div>
             </div>
 
             <div class="col-md-8" id="nomine_address">
                 <div class="form-group mt-md-5 mt-3 adhar_field">
                     <label class="pb-3">Address *</label>
-                    <textarea class="form-control height15" row="2" name="nominee_address" style="height: 103px;">{{ $user_detail->nominee_address }}</textarea>
+                    <textarea class="form-control height15" row="2" name="nominee_address" style="height: 103px;">{{ $user_detail->nominee_address ?? '' }}</textarea>
                 </div>
             </div>
 
@@ -670,7 +670,7 @@
                     <label class="pb-2">Relationship with Account Holder</label>
                     <input type="text" class="form-control" name="nominee_relation" pattern="[A-Za-z]+"
                         minlength="3" placeholder="Please Enter Your Relationship with Account Holder"
-                        value="{{ $user_detail->nominee_relation }}" />
+                        value="{{ $user_detail->nominee_relation ?? '' }}" />
                 </div>
             </div>
 
