@@ -1564,7 +1564,7 @@
                                         // echo $user_detail->city . ",\n";
                                         // echo $user_detail->state . ",\n";
                                         // echo $user_detail->pincode;
-                                        echo $user_detail->address;
+                                        echo $user_detail->address ?? '';
                                     @endphp
                                 </p>
                             </div>
