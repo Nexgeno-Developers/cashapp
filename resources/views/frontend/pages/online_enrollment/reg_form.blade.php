@@ -1522,7 +1522,7 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <p class="card-text"><strong>Birthday :
-                                    </strong>{{ date('d/m/Y', strtotime($user_detail->dob)) }}</p>
+                                    </strong>{{ date('d/m/Y', strtotime($user_detail->dob ?? '')) }}</p>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <p class="card-text"><strong>Mobile : </strong>{{ $user->phone }}</p>
