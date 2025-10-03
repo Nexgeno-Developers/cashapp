@@ -91,7 +91,7 @@ class AuthorController extends Controller
         // Validate form data
         $validator = Validator::make($request->all(), [
             'fullname' => 'required',
-            'email' => 'required|unique:Users,email,'. $request->input('id'),
+            'email' => 'required|unique:users,email,'. $request->input('id'),
             'phone' => 'required|unique:users,phone,'. $request->input('id'),
         ]);
 
