@@ -61,123 +61,159 @@ class SmsController extends Controller
         $recipient = $email;
         $subject = 'Congratulations! You have successfully registered at Motiwala Jewels';
 
-        $body = "Congratulations! You have successfully registered. Your login credentials are: User ID: $phone. Password: $phone. Thank you for joining us. Motiwala Jewels";
+        // $body = "Congratulations! You have successfully registered. Your login credentials are: User ID: $phone. Password: $phone. Thank you for joining us. Motiwala Jewels";
+
+        $body = view('frontend.emails.registration_success', [
+            'phone' => $phone,
+            'email' => $email
+        ])->render();
 
         sendEmail($recipient, $subject, $body);
     }
 
-    public function email_installment_payment_successful($email ,$installment, $amount, $redemption = null){
+    // public function email_installment_payment_successful($email ,$installment, $amount, $redemption = null){
 
+    //     $recipient = $email;
+    //     $subject = "Your $installment installment of $amount has been successfully completed";
+
+    //     if ($redemption != null && !empty($redemption)) {
+    //         $user_name = DB::table('users')->where('id', $redemption->user_id)->value('fullname');
+    //         $body = "Hi <b>" . ucfirst($user_name) . "</b>,<br><br>";
+    //     }
+        
+    //     $body .= "We’re delighted to inform you that your <b>$installment</b> installment of <b>$amount</b> has been successfully completed.
+    //     Thank you for trusting Motiwala Jewels for your precious journey with us!.<br><br>";
+        
+    //     $body .= "Below are the details of your transaction for your reference:<br>";
+
+    //     if ($redemption != null && !empty($redemption)) {
+
+    //         $redemption_items = DB::table('redemption_items')->where('redemption_id', $redemption->id)->get();
+    
+    //         $table = '<div class="information_tb" style="margin-top:20px;">
+    //                     <div style="overflow-x:auto;">
+    //                         <table border="1" cellpadding="5" cellspacing="0" style="width:100%; border-collapse:collapse;">
+    //                             <thead>
+    //                                 <tr>
+    //                                     <th>Installment No</th>
+    //                                     <th>Date</th>
+    //                                     <th>Due Date</th>
+    //                                     <th>Installment Amount</th>';
+    
+    //         if ($redemption->plan_id == 2) {
+    //             $table .= '<th>Reserved Gold</th>';
+    //         }
+    
+    //         $table .= '
+    //                    <th>Status</th>
+    //                 </tr>
+    //             </thead>
+    //             <tbody>';
+    
+    //         $i = 1;
+    //         foreach ($redemption_items as $row) {
+    
+    //             // $receipt_id = ($row->status == 'paid') ? $row->id : 'NA';
+    //             $receipt_date = (in_array($row->status, ['paid', 'request_approval'])) ? custom_date_change($row->receipt_date) : 'NA';
+    //             $due_date = ($row->installment_no == 1) ? '-' : custom_date_change($row->due_date_start);
+    //             $installment_no = $row->installment_no;
+    //             $installment_amount = $row->installment_amount;
+    //             $reserved_gold = ($redemption->plan_id == 2) ? (gold_prifix($row->receivable_gold) ?? '-') : '';
+                
+    //             if (in_array($row->status, ['paid', 'request_approval'])) {
+    //                 $transaction_payment_type = DB::table('transactions')->where('id', $row->transaction_id)->value('payment_type');
+    //                 // $payment_type = match ($transaction_payment_type) {
+    //                 //     'payu' => 'PayU',
+    //                 //     'cashpay' => 'Cash Pay',
+    //                 //     'upipay' => 'UPI',
+    //                 //     'checkpay' => 'Check Pay',
+    //                 //     default => 'NA',
+    //                 // };
+    //                 $status = 'Paid';
+    //             } else {
+    //                 $payment_type = 'NA';
+    //                 $status = 'Unpaid';
+    //             }
+    
+    //             $table .= '<tr>
+    //                         <td>'.$installment_no.'</td>
+    //                         <td>'.$receipt_date.'</td>
+    //                         <td>'.$due_date.'</td>
+    //                         <td>'.$installment_amount.'</td>';
+    
+    //             if ($redemption->plan_id == 2) {
+    //                 $table .= '<td>'.$reserved_gold.'</td>';
+    //             }
+    
+    //             $table .= '
+    //                        <td>'.$status.'</td>
+    //                     </tr>';
+    //         }
+    
+    //         $table .= '</tbody></table></div></div>';
+    
+    //         $body .= $table;
+    //     }
+
+    //     $body .= "<br><br>We truly appreciate your continued support and look forward to serving you with even more sparkling experiences!<br>";
+
+    //     $body .= "If you have any questions or need assistance, feel free to reach out to us.<br><br>";
+
+    //     $body .= "<b>Thank you for choosing Motiwala Jewels!</b><br><br>";
+
+    //     $body .= "Warm regards,<br>
+    //             <b>Motiwala Jewels Team</b>";
+
+    //     sendEmail($recipient, $subject, $body);
+    // }
+
+    public function email_installment_payment_successful($email, $installment, $amount, $redemption = null)
+    {
         $recipient = $email;
         $subject = "Your $installment installment of $amount has been successfully completed";
 
-        if ($redemption != null && !empty($redemption)) {
+        $user_name = null;
+        $redemption_items = [];
+
+        if ($redemption) {
             $user_name = DB::table('users')->where('id', $redemption->user_id)->value('fullname');
-            $body = "Hi <b>" . ucfirst($user_name) . "</b>,<br><br>";
-        }
-        
-        $body .= "We’re delighted to inform you that your <b>$installment</b> installment of <b>$amount</b> has been successfully completed.
-        Thank you for trusting Motiwala Jewels for your precious journey with us!.<br><br>";
-        
-        $body .= "Below are the details of your transaction for your reference:<br>";
-
-        if ($redemption != null && !empty($redemption)) {
-
             $redemption_items = DB::table('redemption_items')->where('redemption_id', $redemption->id)->get();
-    
-            $table = '<div class="information_tb" style="margin-top:20px;">
-                        <div style="overflow-x:auto;">
-                            <table border="1" cellpadding="5" cellspacing="0" style="width:100%; border-collapse:collapse;">
-                                <thead>
-                                    <tr>
-                                        <th>Installment No</th>
-                                        <th>Date</th>
-                                        <th>Due Date</th>
-                                        <th>Installment Amount</th>';
-    
-            if ($redemption->plan_id == 2) {
-                $table .= '<th>Reserved Gold</th>';
-            }
-    
-            $table .= '
-                       <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>';
-    
-            $i = 1;
-            foreach ($redemption_items as $row) {
-    
-                // $receipt_id = ($row->status == 'paid') ? $row->id : 'NA';
-                $receipt_date = (in_array($row->status, ['paid', 'request_approval'])) ? custom_date_change($row->receipt_date) : 'NA';
-                $due_date = ($row->installment_no == 1) ? '-' : custom_date_change($row->due_date_start);
-                $installment_no = $row->installment_no;
-                $installment_amount = $row->installment_amount;
-                $reserved_gold = ($redemption->plan_id == 2) ? (gold_prifix($row->receivable_gold) ?? '-') : '';
-                
-                if (in_array($row->status, ['paid', 'request_approval'])) {
-                    $transaction_payment_type = DB::table('transactions')->where('id', $row->transaction_id)->value('payment_type');
-                    // $payment_type = match ($transaction_payment_type) {
-                    //     'payu' => 'PayU',
-                    //     'cashpay' => 'Cash Pay',
-                    //     'upipay' => 'UPI',
-                    //     'checkpay' => 'Check Pay',
-                    //     default => 'NA',
-                    // };
-                    $status = 'Paid';
-                } else {
-                    $payment_type = 'NA';
-                    $status = 'Unpaid';
-                }
-    
-                $table .= '<tr>
-                            <td>'.$installment_no.'</td>
-                            <td>'.$receipt_date.'</td>
-                            <td>'.$due_date.'</td>
-                            <td>'.$installment_amount.'</td>';
-    
-                if ($redemption->plan_id == 2) {
-                    $table .= '<td>'.$reserved_gold.'</td>';
-                }
-    
-                $table .= '
-                           <td>'.$status.'</td>
-                        </tr>';
-            }
-    
-            $table .= '</tbody></table></div></div>';
-    
-            $body .= $table;
         }
 
-        $body .= "<br><br>We truly appreciate your continued support and look forward to serving you with even more sparkling experiences!<br>";
-
-        $body .= "If you have any questions or need assistance, feel free to reach out to us.<br><br>";
-
-        $body .= "<b>Thank you for choosing Motiwala Jewels!</b><br><br>";
-
-        $body .= "Warm regards,<br>
-                <b>Motiwala Jewels Team</b>";
+        $body = view('frontend.emails.installment_success', [
+            'installment' => $installment,
+            'amount' => $amount,
+            'redemption' => $redemption,
+            'redemption_items' => $redemption_items,
+            'user_name' => $user_name
+        ])->render();
 
         sendEmail($recipient, $subject, $body);
     }
+
+
 
     public function email_registration_not_completed($name="", $email){
 
         $recipient = $email;
         $subject = 'Complete Your Registration to Access All Features at Motiwala Jewels';
 
-        $body = '<p>Dear '.$name.',</p>
+        // $body = '<p>Dear '.$name.',</p>
 
-            <p>We noticed that your registration is still incomplete. To fully access all the features and benefits, please take a moment to complete the registration process.</p>
+        //     <p>We noticed that your registration is still incomplete. To fully access all the features and benefits, please take a moment to complete the registration process.</p>
 
-            <p>If you need any assistance or have any questions, feel free to contact us.</p>
+        //     <p>If you need any assistance or have any questions, feel free to contact us.</p>
 
-            <p>Thank you for choosing us!</p>
+        //     <p>Thank you for choosing us!</p>
 
-            <p>Best regards,<br>
-            Motiwala</p>
-            <p>Mob: +91 9920077780</p>';
+        //     <p>Best regards,<br>
+        //     Motiwala</p>
+        //     <p>Mob: +91 9920077780</p>';
+
+        $body = view('frontend.emails.registration_incomplete', [
+            'name' => $name
+        ])->render();
+
 
         sendEmail($recipient, $subject, $body);
     }
@@ -187,23 +223,27 @@ class SmsController extends Controller
 
     public function wati_due_reminder($phone=null, $name=null, $installment_no=null, $plan_name=null, $amount=null, $due_date=null){
         $phone = $phone;
-        $template_name = 'hv_reminder';
+        $template_name = 'hv_reminder_01';
         $dynmice = [
             [
                 'name' => 'name',
                 'value' => $name
             ],
             [
-                'name' => 'allowbroadcast',
+                'name' => 'installment',
                 'value' => $installment_no
             ],
             [
-                'name' => 'attribute_1',
+                'name' => 'plan_name',
+                'value' => $plan_name
+            ],
+            [
+                'name' => 'amount',
                 'value' => 'Rs '.$amount
             ],
             [
-                'name' => 'attribute_2',
-                'value' => date('d-m-y', strtotime($due_date))
+                'name' => 'date',
+                'value' => date('d M Y', strtotime($due_date))
             ]
         ];
 
@@ -213,23 +253,23 @@ class SmsController extends Controller
 
     public function wati_over_due($phone=null, $name=null, $installment_no=null, $plan_name=null, $amount=null, $due_date=null){
         $phone = $phone;
-        $template_name = 'hv_overdue';
+        $template_name = 'hv_overdue_01';
         $dynmice = [
             [
                 'name' => 'name',
                 'value' => $name
             ],
             [
-                'name' => 'allowbroadcast',
+                'name' => 'installment',
                 'value' => $installment_no
             ],
             [
-                'name' => 'attribute_1',
+                'name' => 'amount',
                 'value' => 'Rs '.$amount
             ],
             [
-                'name' => 'attribute_2',
-                'value' => date('d-m-y', strtotime($due_date))
+                'name' => 'date',
+                'value' => date('d M Y', strtotime($due_date))
             ]
         ];
 
@@ -237,20 +277,24 @@ class SmsController extends Controller
     }
 
 
-    public function wati_payment_success($phone=null, $name=null, $installment_no=null, $amount=null){
+    public function wati_payment_success($phone=null, $name=null, $installment_no=null, $plan_name=null, $amount=null){
         $phone = $phone;
-        $template_name = 'hv_payment_success';
+        $template_name = 'hv_payment_success_02';
         $dynmice = [
             [
                 'name' => 'name',
                 'value' => $name
             ],
             [
-                'name' => 'attribute_1',
+                'name' => 'installment',
                 'value' => $installment_no
             ],
             [
-                'name' => 'attribute_2',
+                'name' => 'plan_name',
+                'value' => $plan_name
+            ],
+            [
+                'name' => 'amount',
                 'value' => 'Rs '.$amount
             ]
         ];
@@ -272,13 +316,12 @@ class SmsController extends Controller
         //     ]
         // ];
         $dynmice = [];
-
         $result = send_Whatsapp_Notification($phone,$template_name,$dynmice);
     }
 
     public function wati_incomplete_registration($phone=null, $name=""){
         $phone = $phone;
-        $template_name = 'hv_incomplete_registration';
+        $template_name = 'hv_incomplete_registration_01';
         $dynmice = [
             [
                 'name' => 'name',
@@ -288,6 +331,7 @@ class SmsController extends Controller
 
         $result = send_Whatsapp_Notification($phone,$template_name,$dynmice);
     }
+
 
 //----------------------------------------- incompleted registration config --------------------------------------//
 
@@ -452,72 +496,109 @@ public function incomplete_registration_msg()
 
         if($days != 'same_day' && $days !="" && $due_date_end == ""){
             $due_date = date('Y-m-d', strtotime($due_date));
-            $body = '
-                <p>Dear '.$name.',</p>
-                <p>We hope this message finds you well.</p>
-                <p>This is a friendly reminder that your payment for Installment Plan <strong>'.$plan.'</strong>, Installment No. <strong>'.$installment.'</strong>, is due on <strong>'.$due_date.'</strong>. To help you stay on track, we wanted to remind you '.$days.' days in advance.</p>
-                <p>Please ensure that your payment is completed on time to avoid any late fees or service interruptions.</p>
-                <p><strong>Payment Details:</strong></p>
-                <ul>
-                    <li><strong>Plan Name:</strong> '.$plan.'</li>
-                    <li><strong>Installment No.:</strong> '.$installment.'</li>
-                    <li><strong>Due Date:</strong> '.$due_date.'</li>
-                    <li><strong>Amount:</strong> '.$amount.'</li>
-                </ul>
-                <p>If you have any questions or need assistance, please feel free to contact our support team.</p>
-                <p>Thank you for your prompt attention to this matter.</p>
-                <p>Best regards,<br>
-                '.env('COMPANY_NAME').'<br>
-                Mob: '.env('COMPANY_NUMBER').'</p>
-            ';
+            // $body = '
+            //     <p>Dear '.$name.',</p>
+            //     <p>We hope this message finds you well.</p>
+            //     <p>This is a friendly reminder that your payment for Installment Plan <strong>'.$plan.'</strong>, Installment No. <strong>'.$installment.'</strong>, is due on <strong>'.$due_date.'</strong>. To help you stay on track, we wanted to remind you '.$days.' days in advance.</p>
+            //     <p>Please ensure that your payment is completed on time to avoid any late fees or service interruptions.</p>
+            //     <p><strong>Payment Details:</strong></p>
+            //     <ul>
+            //         <li><strong>Plan Name:</strong> '.$plan.'</li>
+            //         <li><strong>Installment No.:</strong> '.$installment.'</li>
+            //         <li><strong>Due Date:</strong> '.$due_date.'</li>
+            //         <li><strong>Amount:</strong> '.$amount.'</li>
+            //     </ul>
+            //     <p>If you have any questions or need assistance, please feel free to contact our support team.</p>
+            //     <p>Thank you for your prompt attention to this matter.</p>
+            //     <p>Best regards,<br>
+            //     '.env('COMPANY_NAME').'<br>
+            //     Mob: '.env('COMPANY_NUMBER').'</p>
+            // ';
+
+            $body = view('frontend.emails.installment_reminder', [
+                'email' => $email,
+                'installment' => $installment,
+                'plan' => $plan,
+                'name' => $name,
+                'due_date' => $due_date,
+                'due_date_end' => $due_date_end,
+                'days' => $days,
+                'amount' => $amount,
+            ])->render();
+
+
         } elseif($days == 'same_day' && $due_date_end != "" ){
             $due_date_end = date('Y-m-d', strtotime($due_date_end));
             $due_date = date('Y-m-d', strtotime($due_date));
-            $body = '
-                <p>Dear '.$name.',</p>
-                <p>We hope this message finds you well.</p>
+            // $body = '
+            //     <p>Dear '.$name.',</p>
+            //     <p>We hope this message finds you well.</p>
 
-                <p>This is a friendly reminder that your payment for Installment Plan <strong>'.$plan.'</strong>, Installment No. <strong>'.$installment.'</strong>, is currently due and must be completed by <strong>'.$due_date_end.'</strong>.</p>
+            //     <p>This is a friendly reminder that your payment for Installment Plan <strong>'.$plan.'</strong>, Installment No. <strong>'.$installment.'</strong>, is currently due and must be completed by <strong>'.$due_date_end.'</strong>.</p>
 
-                <p>Please make your payment as soon as possible to avoid any late fees or interruptions.</p>
-                <p><strong>Payment Details:</strong></p>
-                <ul>
-                    <li><strong>Plan Name:</strong> '.$plan.'</li>
-                    <li><strong>Installment No.:</strong> '.$installment.'</li>
-                    <li><strong>Due Date:</strong> '.$due_date.'</li>
-                    <li><strong>Amount:</strong> '.$amount.'</li>
-                </ul>
-                <p>If you have any questions or need assistance, please feel free to contact our support team.</p>
-                <p>Thank you for your prompt attention to this matter.</p>
-                <p>Best regards,<br>
-                '.env('COMPANY_NAME').'<br>
-                Mob: '.env('COMPANY_NUMBER').'</p>
-            ';
+            //     <p>Please make your payment as soon as possible to avoid any late fees or interruptions.</p>
+            //     <p><strong>Payment Details:</strong></p>
+            //     <ul>
+            //         <li><strong>Plan Name:</strong> '.$plan.'</li>
+            //         <li><strong>Installment No.:</strong> '.$installment.'</li>
+            //         <li><strong>Due Date:</strong> '.$due_date.'</li>
+            //         <li><strong>Amount:</strong> '.$amount.'</li>
+            //     </ul>
+            //     <p>If you have any questions or need assistance, please feel free to contact our support team.</p>
+            //     <p>Thank you for your prompt attention to this matter.</p>
+            //     <p>Best regards,<br>
+            //     '.env('COMPANY_NAME').'<br>
+            //     Mob: '.env('COMPANY_NUMBER').'</p>
+            // ';
+
+            $body = view('frontend.emails.installment_reminder', [
+                'email' => $email,
+                'installment' => $installment,
+                'plan' => $plan,
+                'name' => $name,
+                'due_date' => $due_date,
+                'due_date_end' => $due_date_end,
+                'days' => $days,
+                'amount' => $amount,
+            ])->render();
+
+
         } elseif ($days == 'passed' && $due_date_end != ""){
             $due_date_end = date('Y-m-d', strtotime($due_date_end));
             $due_date = date('Y-m-d', strtotime($due_date));
-            $body = '
-                <p>Dear '.$name.',</p>
-                <p>We hope this message finds you well.</p>
+            // $body = '
+            //     <p>Dear '.$name.',</p>
+            //     <p>We hope this message finds you well.</p>
 
-                <p>This is a gentle reminder that your payment for Installment Plan <strong>'.$plan.'</strong>, Installment No. <strong>'.$installment.'</strong>, was due on <strong>'.$due_date_end.'</strong> and is now overdue.</p>
+            //     <p>This is a gentle reminder that your payment for Installment Plan <strong>'.$plan.'</strong>, Installment No. <strong>'.$installment.'</strong>, was due on <strong>'.$due_date_end.'</strong> and is now overdue.</p>
 
-                <p>We kindly request that you make the payment as soon as possible to avoid any further penalties or interruptions to your service.</p>
+            //     <p>We kindly request that you make the payment as soon as possible to avoid any further penalties or interruptions to your service.</p>
 
-                <p>Please make your payment as soon as possible to avoid any late fees or interruptions.</p>
-                <p><strong>Payment Details:</strong></p>
-                <ul>
-                    <li><strong>Plan Name:</strong> '.$plan.'</li>
-                    <li><strong>Installment No.:</strong> '.$installment.'</li>
-                    <li><strong>Due Date:</strong> '.$due_date.'</li>
-                    <li><strong>Amount:</strong> '.$amount.'</li>
-                </ul>
-                <p>If you have any questions or need assistance, please feel free to contact our support team.</p>
-                <p>Thank you for your prompt attention to this matter.</p>
-                <p>Best regards,<br>
-                '.env('COMPANY_NAME').'<br>
-                Mob: '.env('COMPANY_NUMBER').'</p>
-            ';
+            //     <p>Please make your payment as soon as possible to avoid any late fees or interruptions.</p>
+            //     <p><strong>Payment Details:</strong></p>
+            //     <ul>
+            //         <li><strong>Plan Name:</strong> '.$plan.'</li>
+            //         <li><strong>Installment No.:</strong> '.$installment.'</li>
+            //         <li><strong>Due Date:</strong> '.$due_date.'</li>
+            //         <li><strong>Amount:</strong> '.$amount.'</li>
+            //     </ul>
+            //     <p>If you have any questions or need assistance, please feel free to contact our support team.</p>
+            //     <p>Thank you for your prompt attention to this matter.</p>
+            //     <p>Best regards,<br>
+            //     '.env('COMPANY_NAME').'<br>
+            //     Mob: '.env('COMPANY_NUMBER').'</p>
+            // ';
+
+            $body = view('frontend.emails.installment_reminder', [
+                'email' => $email,
+                'installment' => $installment,
+                'plan' => $plan,
+                'name' => $name,
+                'due_date' => $due_date,
+                'due_date_end' => $due_date_end,
+                'days' => $days,
+                'amount' => $amount,
+            ])->render();
         }
 
 

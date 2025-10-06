@@ -1118,9 +1118,9 @@ class AccountController extends Controller
             if (!$users_email) {
                 // $sms = (new SmsController)->smsgatewayhub_registration_successful($phone);
 
-                // $email_templet1 = (new SmsController)->email_registration_successful($phone, $email);
+                $email_templet1 = (new SmsController)->email_registration_successful($phone, $email);
 
-                // $wati_registration_success = (new SmsController)->wati_registration_success($phone);
+                $wati_registration_success = (new SmsController)->wati_registration_success($phone);
             }
 
 
